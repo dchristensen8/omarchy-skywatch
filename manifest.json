@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "dchristensen8.skywatch",
+  "name": "Skywatch",
+  "version": "1.0.0",
+  "author": "dchristensen8",
+  "license": "MIT",
+  "description": "Weather forecast with a live interactive radar in one bar widget: current conditions, a 3-day forecast, and the Omastorm radar in a single popup.",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "BarWidget.qml"
+  },
+  "barWidget": {
+    "displayName": "Skywatch",
+    "description": "Weather pill with 3-day forecast and live radar",
+    "category": "Weather",
+    "allowMultiple": false,
+    "defaultSection": "center"
+  }
+}
