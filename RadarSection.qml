@@ -1,13 +1,15 @@
 import QtQuick
 import Quickshell
-import "../com.omastorm.radar/ui"
+import "./radar/ui"
 
 // Skywatch radar section.
 //
-// The interactive radar is Omastorm's popover UI, embedded as-is with its
-// shared PluginSession singleton so the weather panel and Omastorm share one
-// engine connection, config, and remembered view. See README.md for credits
-// and the required Omastorm install (https://github.com/wesleygrimes/omastorm).
+// The interactive radar is Omastorm's popover UI (MIT, Wes Grimes,
+// https://github.com/wesleygrimes/omastorm), vendored into radar/ so Skywatch
+// is self-contained: no separate Omastorm install is required, and updates to
+// Skywatch carry the radar UI with them. The shared PluginSession singleton
+// keeps the weather panel and radar on one engine connection, config, and
+// remembered view.
 //
 // Location sync (two-way, weather.json is the shared source of truth):
 //   - Weather -> radar: when the weather location changes, the radar moves

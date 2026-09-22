@@ -169,7 +169,7 @@ Panel {
   // The embedded Omastorm radar's expand affordance opens the full radar
   // window, the same way the standalone omastorm bar widget does.
   function expandRadar() {
-    Quickshell.execDetached(["omarchy", "shell", "shell", "toggle", "com.omastorm.radar", "{}"])
+    Quickshell.execDetached(["omarchy", "shell", "shell", "summon", "dchristensen8.skywatch", "{}"])
   }
 
   function refreshDailyForecast(sourceReport) {
@@ -1011,7 +1011,7 @@ Panel {
         }
         onStatusChanged: {
           if (status === Loader.Error) {
-            console.warn("Skywatch: radar unavailable — is Omastorm installed?", errorString())
+            console.warn("Skywatch: radar failed to load:", errorString())
           }
         }
       }
@@ -1021,7 +1021,7 @@ Panel {
         width: parent.width
         horizontalAlignment: Text.AlignHCenter
         wrapMode: Text.Wrap
-        text: "Radar needs the Omastorm plugin:\n⛅ omarchy plugin add https://github.com/wesleygrimes/omastorm.git --enable"
+        text: "Radar is starting — if this persists, check the Omastorm engine install (see the README)."
         color: Qt.darker(root.bar.foreground, 1.5)
         font.family: root.bar.fontFamily
         font.pixelSize: Style.font.bodySmall
