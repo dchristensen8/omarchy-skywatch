@@ -1011,7 +1011,7 @@ Panel {
         }
         onStatusChanged: {
           if (status === Loader.Error) {
-            console.warn("Skywatch: radar failed to load:", errorString())
+            console.warn("Skywatch: radar failed to load:", radarLoader.source)
           }
         }
       }

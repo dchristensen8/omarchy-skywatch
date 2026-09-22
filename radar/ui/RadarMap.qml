@@ -1,3 +1,6 @@
+// Omastorm (c) 2026 Wes Grimes, MIT — https://github.com/wesleygrimes/omastorm
+// Vendored into Skywatch; see ../NOTICE and ../LICENSE. Adapted for Skywatch:
+// preventStealing so the map's drag wins over the enclosing weather panel.
 import QtQuick
 import QtQuick.Shapes
 import Quickshell

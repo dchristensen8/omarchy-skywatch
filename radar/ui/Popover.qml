@@ -1,3 +1,6 @@
+// Omastorm (c) 2026 Wes Grimes, MIT — https://github.com/wesleygrimes/omastorm
+// Vendored into Skywatch; see ../NOTICE and ../LICENSE. Adapted for Skywatch:
+// drag-to-pan, dedicated ⤢ expand target, camera-sync on pan, and dBZ legend.
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts

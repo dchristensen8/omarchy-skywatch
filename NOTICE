@@ -1,0 +1,26 @@
+Skywatch includes substantial portions of Omastorm, bundled (vendored) under
+`radar/` so Skywatch is self-contained.
+
+Omastorm
+--------
+Live weather radar for the Omarchy bar.
+Copyright (c) 2026 Wes Grimes
+https://github.com/wesleygrimes/omastorm
+License: MIT — see radar/LICENSE
+
+The vendored radar UI (radar/ui/), engine bootstrap (radar/run.sh,
+radar/scripts/, radar/engine/release.pin), and their shaders are from
+Omastorm, with local Skywatch adaptations (drag-to-pan in the popover, a
+dedicated ⤢ expand target, dBZ legend, and camera sync on pan).
+
+Data attribution (as described by Omastorm):
+  Radar: NOAA NEXRAD Level II via the NOAA Open Data program on AWS;
+    Europe mosaic from EUMETNET OPERA COMP DBZH via the Open Radar Data
+    24-hour cache (CC BY 4.0).
+  Basemap: © OpenStreetMap contributors (ODbL); tiles by OpenFreeMap;
+    Natural Earth, public domain.
+  Location search: GeoNames (CC BY 4.0).
+  Approximate location: wttr.in.
+
+This project is not affiliated with or endorsed by Wes Grimes or the
+Omastorm project. Omastorm is used under its MIT license.

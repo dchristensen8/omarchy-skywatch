@@ -1,4 +1,7 @@
 pragma Singleton
+// Omastorm (c) 2026 Wes Grimes, MIT — https://github.com/wesleygrimes/omastorm
+// Vendored into Skywatch; see ../NOTICE and ../LICENSE. Adapted for Skywatch:
+// radar root + manifest path point at Skywatch's own directory.
 import QtQuick
 import Quickshell
 import Quickshell.Io

@@ -111,9 +111,22 @@ Skywatch combines two plugins:
   [wttr.in](https://wttr.in).
 - **Radar** — the interactive radar is [Omastorm](https://github.com/wesleygrimes/omastorm)
   by **Wes Grimes** (MIT), vendored into `radar/` (including the engine
-  bootstrap) so Skywatch is self-contained. NOAA NEXRAD (US) and EUMETNET
-  OPERA (Europe) reflectivity data; basemaps © OpenStreetMap / Natural
-  Earth. The vendored source retains its own [LICENSE](radar/LICENSE).
+  bootstrap) so Skywatch is self-contained. See [NOTICE](NOTICE) for the
+  full attribution, and [radar/LICENSE](radar/LICENSE) for the vendored
+  source's license.
+
+### Data attribution
+
+Radar: NOAA NEXRAD Level II via the NOAA Open Data program on AWS; the
+Europe mosaic comes from [EUMETNET OPERA](https://www.eumetnet.eu/) COMP DBZH
+via the [Open Radar Data](https://eumetnet.github.io/openradardata-documentation/1-ORD-API-overview/)
+24-hour cache ([CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)).
+Basemap: © [OpenStreetMap](https://www.openstreetmap.org/copyright)
+contributors ([ODbL](https://opendatacommons.org/licenses/odbl/1-0/)), tiles
+by [OpenFreeMap](https://openfreemap.org); Natural Earth, public domain.
+Location search: [GeoNames](https://www.geonames.org/)
+([CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)). Approximate
+location: [wttr.in](https://wttr.in).
 
 The panel layout that joins the forecast and the radar, plus the home
 location and two-way location sync, are original to Skywatch. This project
