@@ -41,6 +41,19 @@ The Omastorm engine binary downloads itself on first radar open (see the
 - Refresh interval configurable (default 15 min) via the weather widget
   settings; middle-click refreshes now
 
+### Location sync
+
+The weather panel and the radar share one location (`weather.json`), so
+changing it in either surface updates both:
+
+- **Weather → radar** — search a new city in the weather panel and the radar
+  re-centers on it.
+- **Radar → weather** — pick a place on the radar (search, site picker, or
+  "my location") and the forecast follows.
+
+Panning the radar is navigation, not a location change, so it never rewrites
+your weather location.
+
 ### Radar
 
 - Live interactive radar (drag to pan, scroll to zoom) rendered by Omastorm
