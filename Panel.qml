@@ -28,6 +28,7 @@ Panel {
     root.controller.show()
     locationFile.reload()
     root.refresh()
+    root.returnHome()
   }
 
   function openFromHotkey() {
@@ -35,6 +36,7 @@ Panel {
     root.controller.show()
     locationFile.reload()
     root.refresh()
+    root.returnHome()
     // Set after showing, not before: showing hands the popout coordinator
     // over, which closes whichever panel was open, and that close clears the
     // shared flag. Deferring means the panel taking over always wins, while
@@ -48,6 +50,7 @@ Panel {
   function close() {
     setCenterHoverRevealSuppressed(false)
     if (root.editingLocation) root.cancelEditingLocation()
+    root.returnHome()
     root.controller.hide()
   }
 
@@ -264,6 +267,90 @@ Panel {
     else
       locationSaveProc.command = ["omarchy-weather-location", "--clear"]
     locationSaveProc.running = true
+  }
+
+  // ---- Home location. Stored in this widget's inline shell.json entry as
+  //      `home: {name, latitude, longitude}`. The widget opens and closes on
+  //      home; while open, browsing elsewhere keeps forecast and radar synced.
+  readonly property var homeLocation: root.parseHome(root.setting("home", null))
+  readonly property bool hasHome: !!root.homeLocation && !!root.homeLocation.name
+
+  function parseHome(raw) {
+    if (raw && typeof raw === "object" && raw.name) return raw
+    return null
+  }
+
+  // The current display location as a home-shaped record, so "set as home"
+  // pins what the user is actually looking at (configured coords when set,
+  // else the area wttr reported).
+  function currentHomeRecord() {
+    var name = root.configuredLocationState.name || root.reportLocation || ""
+    var lat = parseFloat(String(root.configuredLocationState.latitude))
+    var lon = parseFloat(String(root.configuredLocationState.longitude))
+    if (isNaN(lat) || isNaN(lon)) {
+      lat = root.areaInfo ? parseFloat(String(root.areaInfo.latitude || "")) : NaN
+      lon = root.areaInfo ? parseFloat(String(root.areaInfo.longitude || "")) : NaN
+    }
+    return { name: name, latitude: isNaN(lat) ? null : lat, longitude: isNaN(lon) ? null : lon }
+  }
+
+  function setHome() {
+    var record = root.currentHomeRecord()
+    if (!record.name) return
+    var entry = { id: root.moduleName }
+    for (var key in root.settings) if (key !== "id") entry[key] = root.settings[key]
+    entry.home = record
+    root.settings = entry
+    if (root.bar && root.bar.shell && typeof root.bar.shell.updateEntryInline === "function")
+      root.bar.shell.updateEntryInline(root.moduleName, entry)
+  }
+
+  function clearHome() {
+    var entry = { id: root.moduleName }
+    for (var key in root.settings) if (key !== "id") entry[key] = root.settings[key]
+    entry.home = null
+    root.settings = entry
+    if (root.bar && root.bar.shell && typeof root.bar.shell.updateEntryInline === "function")
+      root.bar.shell.updateEntryInline(root.moduleName, entry)
+  }
+
+  // Jump straight to home now (house button), without waiting for close.
+  function goHome() {
+    var home = root.homeLocation
+    if (!home) return
+    root.persistLocation(home.name, home.latitude, home.longitude)
+  }
+
+  // Revert to home. Called on open and close so the widget always rests on
+  // home; writing weather.json drives the radar home through the shared
+  // location sync in RadarSection.qml.
+  function returnHome() {
+    var home = root.homeLocation
+    if (!home) return
+    var current = root.configuredLocationState
+    var same = current && current.name === home.name
+    if (current && home.latitude != null && home.longitude != null
+        && current.latitude != null && current.longitude != null) {
+      same = same
+        && Math.abs(home.latitude - current.latitude) < 1e-6
+        && Math.abs(home.longitude - current.longitude) < 1e-6
+    }
+    if (same) return
+    root.persistLocation(home.name, home.latitude, home.longitude)
+  }
+
+  // True when the current view is at the configured home (for the indicator).
+  readonly property bool atHome: {
+    if (!root.homeLocation) return false
+    var home = root.homeLocation
+    var current = root.configuredLocationState
+    if (!current || current.name !== home.name) return false
+    if (home.latitude != null && home.longitude != null
+        && current.latitude != null && current.longitude != null) {
+      return Math.abs(home.latitude - current.latitude) < 1e-6
+        && Math.abs(home.longitude - current.longitude) < 1e-6
+    }
+    return true
   }
 
   // Debounced geocoding. Only one curl runs at a time; if the query moved on
@@ -490,6 +577,9 @@ Panel {
     function hide(): void { root.close() }
     function toggle(): void { root.toggle() }
     function edit(): void { root.openFromHotkey(); root.startEditingLocation() }
+    function setHome(): void { root.setHome() }
+    function goHome(): void { root.goHome() }
+    function clearHome(): void { root.clearHome() }
   }
 
   KeyboardPanel {
@@ -611,6 +701,48 @@ Panel {
               font.pixelSize: Style.font.body
               font.letterSpacing: 1
               anchors.verticalCenter: parent.verticalCenter
+            }
+
+            // ---- Home control. Left-click jumps home (or pins home when
+            //      none is set); right-click pins the current location as
+            //      home. Filled/accent while at home, outlined otherwise.
+            Item {
+              id: homeButton
+              width: Style.space(20)
+              height: Style.space(20)
+              anchors.verticalCenter: parent.verticalCenter
+              anchors.leftMargin: Style.space(4)
+
+              Rectangle {
+                anchors.fill: parent
+                radius: Math.min(5, Style.cornerRadius)
+                color: homeArea.containsMouse
+                  ? Style.hoverFillFor(root.bar.foreground, root.atHome ? Color.accent : Color.foreground)
+                  : "transparent"
+              }
+
+              Text {
+                anchors.centerIn: parent
+                textFormat: Text.PlainText
+                text: root.atHome ? "󰋽" : (root.hasHome ? "" : "󰋼")  // nf-md-home-variant vs nf-fa-home / outline
+                color: root.atHome ? Color.accent
+                  : root.hasHome ? Qt.darker(root.bar.foreground, 1.2)
+                  : Qt.darker(root.bar.foreground, 1.5)
+                font.family: root.bar.fontFamily
+                font.pixelSize: Style.font.body
+              }
+
+              MouseArea {
+                id: homeArea
+                anchors.fill: parent
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+                onClicked: function(mouse) {
+                  if (mouse.button === Qt.RightButton) root.setHome()
+                  else if (root.hasHome) root.goHome()
+                  else root.setHome()
+                }
+              }
             }
           }
 

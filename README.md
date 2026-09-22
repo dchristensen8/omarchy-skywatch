@@ -54,6 +54,26 @@ changing it in either surface updates both:
 Panning the radar is navigation, not a location change, so it never rewrites
 your weather location.
 
+### Home location
+
+Pin a **home** and Skywatch always returns to it. Click the house icon next
+to the location label in the panel:
+
+- **No home set** — a click pins the current location as home.
+- **Home set** — a click jumps straight home; a right-click re-pins the
+  current location as the new home.
+
+While the panel is open you can browse anywhere — the forecast and radar stay
+synced. When you **close** the panel (or reopen it), everything returns to
+home. Home is stored in the widget's `home` setting in `shell.json`:
+
+```json
+{
+  "id": "dchristensen8.skywatch",
+  "home": { "name": "Topeka, Kansas", "latitude": 39.0489, "longitude": -95.6780 }
+}
+```
+
 ### Radar
 
 - Live interactive radar (drag to pan, scroll to zoom) rendered by Omastorm
