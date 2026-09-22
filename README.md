@@ -57,7 +57,7 @@ your weather location.
 ### Home location
 
 Pin a **home** and Skywatch always returns to it. Click the house icon next
-to the location label in the panel:
+to the location label in the panel (hover it for a tooltip):
 
 - **No home set** — a click pins the current location as home.
 - **Home set** — a click jumps straight home; a right-click re-pins the

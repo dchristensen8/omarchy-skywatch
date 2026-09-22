@@ -281,8 +281,8 @@ Panel {
   }
 
   // The current display location as a home-shaped record, so "set as home"
-  // pins what the user is actually looking at (configured coords when set,
-  // else the area wttr reported).
+  // pins what the user is actually looking at. Prefers the configured
+  // coordinates; only falls back to the reported area when nothing is set.
   function currentHomeRecord() {
     var name = root.configuredLocationState.name || root.reportLocation || ""
     var lat = parseFloat(String(root.configuredLocationState.latitude))
@@ -706,43 +706,21 @@ Panel {
             // ---- Home control. Left-click jumps home (or pins home when
             //      none is set); right-click pins the current location as
             //      home. Filled/accent while at home, outlined otherwise.
-            Item {
+            Button {
               id: homeButton
-              width: Style.space(20)
-              height: Style.space(20)
+              implicitWidth: Style.space(24)
+              implicitHeight: Style.space(24)
               anchors.verticalCenter: parent.verticalCenter
               anchors.leftMargin: Style.space(4)
-
-              Rectangle {
-                anchors.fill: parent
-                radius: Math.min(5, Style.cornerRadius)
-                color: homeArea.containsMouse
-                  ? Style.hoverFillFor(root.bar.foreground, root.atHome ? Color.accent : Color.foreground)
-                  : "transparent"
-              }
-
-              Text {
-                anchors.centerIn: parent
-                textFormat: Text.PlainText
-                text: root.atHome ? "󰋽" : (root.hasHome ? "" : "󰋼")  // nf-md-home-variant vs nf-fa-home / outline
-                color: root.atHome ? Color.accent
-                  : root.hasHome ? Qt.darker(root.bar.foreground, 1.2)
-                  : Qt.darker(root.bar.foreground, 1.5)
-                font.family: root.bar.fontFamily
-                font.pixelSize: Style.font.body
-              }
-
-              MouseArea {
-                id: homeArea
-                anchors.fill: parent
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
-                onClicked: function(mouse) {
-                  if (mouse.button === Qt.RightButton) root.setHome()
-                  else if (root.hasHome) root.goHome()
-                  else root.setHome()
-                }
-              }
+              iconText: root.atHome ? "󰋽" : (root.hasHome ? "" : "󰋼")  // nf-md-home-variant vs nf-fa-home / outline
+              foreground: root.atHome ? Color.accent
+                : root.hasHome ? Qt.darker(root.bar.foreground, 1.2)
+                : Qt.darker(root.bar.foreground, 1.5)
+              tooltipText: root.hasHome
+                ? "Left-click: go home · Right-click: set this location as home"
+                : "Click: set this location as home"
+              onClicked: root.hasHome ? root.goHome() : root.setHome()
+              onRightClicked: root.setHome()
             }
           }
 
