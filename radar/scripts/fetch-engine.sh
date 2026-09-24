@@ -36,7 +36,11 @@ if [[ -n ${OMASTORM_ENGINE_ASSET:-} ]]; then
   cp -- "$OMASTORM_ENGINE_ASSET" "$tmp"
 else
   url=${OMASTORM_ENGINE_URL:-https://github.com/$repo/releases/download/$tag/$asset}
-  if ! curl -fsSL --retry 2 -A "omastorm/$tag (https://omastorm.com)" -o "$tmp" -- "$url"; then
+  # Bound the download: a 60s deadline (retries included) and a 64 MiB cap so
+  # a stalled or oversized response fails fast instead of running indefinitely
+  # or filling the disk before the sha256 check (marketplace security baseline).
+  if ! curl -fsSL --retry 2 --max-time 60 --retry-max-time 60 --max-filesize 67108864 \
+      -A "omastorm/$tag (https://omastorm.com)" -o "$tmp" -- "$url"; then
     die "Could not download $asset from $url." \
       "Publish GitHub Release $tag on $repo with that asset matching $pin_file, and make the repository public so the asset is anonymous." \
       "From a checkout with Rust: bash scripts/cargo.sh build --locked && bash run.sh"
