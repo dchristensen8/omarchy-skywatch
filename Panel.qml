@@ -192,7 +192,7 @@ Panel {
       + "&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,weather_code,is_day"
       + "&forecast_days=4"
       + "&timezone=auto"
-    dailyForecastProc.command = ["curl", "-fsS", "--max-time", "5", url]
+    dailyForecastProc.command = ["curl", "-fsS", "--max-time", "5", "--max-filesize", "1048576", url]
     dailyForecastProc.running = true
   }
 
@@ -367,7 +367,7 @@ Panel {
 
   function startGeocode() {
     geocodeActiveQuery = geocodePendingQuery
-    geocodeProc.command = ["curl", "-fsS", "--max-time", "5",
+    geocodeProc.command = ["curl", "-fsS", "--max-time", "5", "--max-filesize", "524288",
       "https://geocoding-api.open-meteo.com/v1/search?name=" + encodeURIComponent(geocodeActiveQuery) + "&count=5&language=en&format=json"]
     geocodeProc.running = true
   }
@@ -425,7 +425,7 @@ Panel {
 
   Process {
     id: forecastProc
-    command: ["curl", "-fsS", "--max-time", "10", "https://wttr.in/" + root.locationQuery + "?format=j1"]
+    command: ["curl", "-fsS", "--max-time", "10", "--max-filesize", "524288", "https://wttr.in/" + root.locationQuery + "?format=j1"]
     stdout: StdioCollector {
       waitForEnd: true
       onStreamFinished: {
@@ -548,7 +548,7 @@ Panel {
 
   Process {
     id: locationProc
-    command: ["curl", "-fsS", "--max-time", "4", "https://wttr.in/?format=%l"]
+    command: ["curl", "-fsS", "--max-time", "4", "--max-filesize", "65536", "https://wttr.in/?format=%l"]
     stdout: StdioCollector {
       waitForEnd: true
       onStreamFinished: {
