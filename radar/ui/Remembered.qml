@@ -35,9 +35,13 @@ QtObject {
         if (!path) return;
         var slash = path.lastIndexOf("/");
         var dir = slash >= 0 ? path.slice(0, slash) : ".";
+        // Write via mktemp (exclusive creation, never follows a pre-existing
+        // symlink at a predictable path) then atomically rename into place.
+        // A hardcoded "<path>.tmp" could be redirected through a symlink to
+        // overwrite an unrelated file before the rename (security baseline).
         writer.command = ["sh", "-c",
-            "mkdir -p -- \"$1\" && printf '%s\\n' \"$3\" > \"$2\" && mv -f -- \"$2\" \"$4\"",
-            "omastorm-state", dir, path + ".tmp", text, path];
+            "mkdir -p -- \"$1\" && tmp=$(mktemp \"$1/.omastorm-state.XXXXXX\") && printf '%s\\n' \"$2\" > \"$tmp\" && mv -f -- \"$tmp\" \"$3\"",
+            "omastorm-state", dir, text, path];
         writer.running = true;
     }
     property Process writer: Process {
